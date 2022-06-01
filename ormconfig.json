@@ -1,0 +1,16 @@
+{
+  "name": "default",
+  "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
+  "username": "postgres",
+  "password": "postgres",
+  "database": "asterisk-api-db",
+  "synchronize": false,
+  "logging": false,
+  "entities": ["dist/**/*.entity{.ts,.js}"],
+  "migrations": ["dist/app/db/migrations/*.js"],
+  "cli": {
+    "migrationsDir": "src/app/db/migrations"
+  }
+}
