@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { OrderEntity } from '../order/order.entity';
+import { OrderEntity } from './order.entity';
 
 @Entity('order_status')
 export class OrderStatusEntity {
@@ -12,6 +12,6 @@ export class OrderStatusEntity {
   @Column()
   description: string;
 
-  @OneToMany(() => OrderEntity, (order: OrderEntity) => order.orderStatus)
+  @OneToMany(() => OrderEntity, (order: OrderEntity) => order.statusId)
   orders: OrderEntity[];
 }
