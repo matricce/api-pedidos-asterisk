@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 import { from, lastValueFrom, map, Observable } from 'rxjs';
 import { Repository } from 'typeorm';
 import { updateOrderDto } from './dtos/update-order.dto';
@@ -11,16 +12,6 @@ export class OrderService {
     @InjectRepository(OrderEntity)
     private readonly orderRepository: Repository<OrderEntity>,
   ) {}
-
-  findAll(): Observable<OrderEntity[]> {
-    return from(
-      this.orderRepository
-        .createQueryBuilder('order')
-        .leftJoinAndSelect('order.statusId', 'status')
-        .orderBy('order.id', 'ASC')
-        .getMany(),
-    );
-  }
 
   findByID(id: string): Observable<OrderEntity> {
     id = id.trim();
@@ -43,6 +34,26 @@ export class OrderService {
         return data;
       }),
     );
+  }
+
+  findAll(): Observable<OrderEntity[]> {
+    return from(
+      this.orderRepository
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.statusId', 'status')
+        .orderBy('order.id', 'ASC')
+        .getMany(),
+    );
+  }
+
+  listOrders(query: PaginateQuery): Promise<Paginated<OrderEntity>> {
+    const preQuery = this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.statusId', 'status');
+    return paginate(query, preQuery, {
+      sortableColumns: ['id', 'name', 'statusId'],
+      defaultSortBy: [['id', 'ASC']],
+    });
   }
 
   async createOrder(body: OrderEntity): Promise<OrderEntity> {

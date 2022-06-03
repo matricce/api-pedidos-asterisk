@@ -4,17 +4,22 @@ import { createOrderDto } from './dtos/create-order.dto';
 import { OrderService } from './order.service';
 import { getOrderByIdDto } from './dtos/get-order.dto';
 import { updateOrderDto } from './dtos/update-order.dto';
+import { Paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
-  @Get('all')
+  @Get('/all')
   async getAllOrders() {
     return this.orderService.findAll();
   }
   @Get('/id/:id')
   async getOrders(@Param() params: getOrderByIdDto) {
     return this.orderService.findByID(params.id);
+  }
+  @Get('/list')
+  async listOrders(@Paginate() query: PaginateQuery): Promise<Paginated<any>> {
+    return this.orderService.listOrders(query);
   }
   @Post()
   async createOrder(@Body() body: createOrderDto) {
